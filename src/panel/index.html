@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="index.js" defer></script>
+    <title>Itemize Receipts</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Itemize Receipts</h1>
+      <form class="upload-form">
+        <label for="apiKey">OpenRouter API Key</label>
+        <input type="text" name="apiKey" id="apiKey" />
+
+        <label for="receipt">Upload Receipt</label>
+        <input type="file" name="receipt" id="receipt" accept="image/*" />
+
+        <button type="submit" id="checkButton">Check</button>
+      </form>
+    </div>
+  </body>
+</html>
