@@ -23,8 +23,8 @@ export const drawContents = async (contents) => {
 }
 
 export const handleLinks = () => {
-  wireUpLink("authorLink", "https://vivekraman.dev/blog/itemize-receipts");
-  wireUpLink("openSettings", "chrome-extension://" + chrome.runtime.id + "/options.html");
+  wireUpLink("openAbout", "https://vivekraman.dev/blog/itemize-receipts");
+  wireUpLink("openSettings", () => chrome.runtime.openOptionsPage());
 }
 
 const wireUpLink = (linkId, url) => {
@@ -32,7 +32,9 @@ const wireUpLink = (linkId, url) => {
   if (container) {
     container.addEventListener("click", (event) => {
       event.preventDefault();
-      if (typeof browser !== 'undefined' && browser.tabs) {
+      if (typeof url === 'function') {
+        url();
+      } else if (typeof browser !== 'undefined' && browser.tabs) {
         browser.tabs.create({ url: url });
       } else if (typeof chrome !== 'undefined' && chrome.tabs) {
         chrome.tabs.create({ url: url });

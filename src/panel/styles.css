@@ -1,19 +1,5 @@
 body {
-  margin: 1rem;
   text-align: center;
-  height: 100%;
-}
-
-.container {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-
-form label {
-  font-weight: bold;
 }
 
 .receipt {
@@ -40,25 +26,4 @@ form label {
 
 #receipt-footer {
   text-align: right;
-}
-
-.footer {
-  color: #666;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-}
-
-.footer-links > * {
-  padding-inline: .5rem;
-}
-
-.footer-links > *:not(:last-child) {
-  border-right: 1px solid #ccc;
-}
-
-.footer-links a {
-  color: #66f;
 }
