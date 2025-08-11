@@ -9,20 +9,55 @@
   </head>
   <body>
     <div class="container">
-      <h1>Itemize Receipts</h1>
-      <form class="upload-form">
-        <label for="receipt">Upload Receipt</label>
-        <input type="file" name="receipt" id="receipt" accept="image/*" />
+      <main>
+        <h1>Itemize Receipts</h1>
+        <form id="upload-form">
+          <input type="file" name="receipt" id="receipt" accept="image/*" />
 
-        <button type="submit" id="checkButton">Check</button>
-      </form>
-      <div id="logger"></div>
-      <div id="contents"></div>
+          <button type="submit" id="scanReceipt">Scan Receipt</button>
+        </form>
 
-      <div class="settings-link">
-        <a href="#" id="openSettings">Settings</a>
-      </div>
+        <div id="logger"></div>
 
+        <div class="receipt">
+          <div id="receipt-header">
+            <p>Scan a receipt to get started</p>
+          </div>
+          <hr />
+          <form id="receipt-form">
+            <table class="receipt-table">
+              <thead>
+                <tr>
+                  <th class="line-item">Line Item</th>
+                  <th class="price">Price</th>
+                  <th class="selected">Selected</th>
+                </tr>
+              </thead>
+              <tbody id="receipt-table-body">
+                <tr>
+                  <td class="line-item">-</td>
+                  <td class="price">-</td>
+                  <td class="selected">-</td>
+                </tr>
+              </tbody>
+            </table>
+            <div id="receipt-footer">
+              <p><strong>Tax</strong>: 0.00</p>
+              <p><strong>Tip</strong>: 0.00</p>
+              <p><strong>Total</strong>: 0.00</p>
+            </div>
+            <button id="insertToSplitwise">Insert to Splitwise</button>
+          </form>
+          <button id="clearReceipt">Clear Receipt</button>
+        </div>
+      </main>
+      <footer>
+        <p>AI can produce incorrect scans. Please verify the information manually!</p>
+        <div class="footer-links">
+          <a href="#" id="authorLink">About</a>
+          <a href="#" id="openSettings">Settings</a>
+        </div>
+      </footer>
     </div>
   </body>
 </html>

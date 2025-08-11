@@ -1,42 +1,64 @@
 body {
   margin: 1rem;
+  text-align: center;
+  height: 100%;
 }
 
 .container {
+  height: 100%;
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.upload-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  justify-content: space-around;
 }
 
-.upload-form label {
+form label {
   font-weight: bold;
+}
+
+.receipt {
+  border: 1px solid #ccc;
+  margin-top: 2rem;
+  padding: 1rem;
 }
 
 .receipt-table {
   width: 100%;
 }
 
-.receipt-table th {
+.receipt-table .line-item {
   text-align: left;
 }
 
-.settings-link {
-  margin-top: 20px;
-  text-align: center;
+.receipt-table .price {
+  text-align: right;
 }
 
-.settings-link a {
-  color: #007cba;
-  text-decoration: none;
-  font-size: 14px;
+.receipt-table .selected {
+  text-align: right;
 }
 
-.settings-link a:hover {
-  text-decoration: underline;
+#receipt-footer {
+  text-align: right;
+}
+
+.footer {
+  color: #666;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+}
+
+.footer-links > * {
+  padding-inline: .5rem;
+}
+
+.footer-links > *:not(:last-child) {
+  border-right: 1px solid #ccc;
+}
+
+.footer-links a {
+  color: #66f;
 }

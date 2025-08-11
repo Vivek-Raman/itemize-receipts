@@ -29,8 +29,8 @@ export const submitPrompt = async (image) => {
     headers: {
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": "https://finance.vivekraman.dev",
-      "X-Title": "Vivek's Finance Manager",
+      "HTTP-Referer": "https://vivekraman.dev/work/itemize-receipts",
+      "X-Title": "Itemize Receipts",
     },
     body: JSON.stringify({
       model: "google/gemma-3-12b-it:free",

@@ -1,7 +1,7 @@
-import { parseResponse, submitPrompt } from "./ai.js";
-import { Logger } from "./logger.js";
-import { loadPersistedContents, persistContents } from "./storage.js";
-import { drawContents } from "./view.js";
+import { parseResponse, submitPrompt } from "./js/ai.mjs";
+import { Logger } from "./js/logger.mjs";
+import { loadPersistedContents, persistContents } from "./js/storage.mjs";
+import { drawContents, handleLinks } from "./js/view.mjs";
 
 const scanReceipt = async (logger, formData) => {
   const receiptFile = formData.get('receipt');
@@ -24,9 +24,10 @@ const scanReceipt = async (logger, formData) => {
 
 document.addEventListener("DOMContentLoaded", () => {
   const logger = new Logger();
-  const form = document.querySelector("form");
+  const form = document.getElementById("upload-form");
 
-  loadPersistedContents();
+  loadPersistedContents(logger);
+  handleLinks();
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();

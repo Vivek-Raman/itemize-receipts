@@ -1,4 +1,4 @@
-import { drawContents } from "./view.js";
+import { drawContents } from "./view.mjs";
 
 export const persistContents = async (contents) => {
   const doc = {
@@ -11,10 +11,11 @@ export const clearContents = async () => {
   await chrome.storage.session.remove('contents');
 }
 
-export const loadPersistedContents = async () => {
+export const loadPersistedContents = async (logger) => {
   const doc = await chrome.storage.session.get(['contents']);
   if (doc?.contents) {
     await drawContents(doc.contents);
+    logger.log("Loaded previous scan from storage.");
   }
 }
 
