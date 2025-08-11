@@ -1,4 +1,4 @@
-class Logger {
+export class Logger {
   constructor() {
     this.enabled = false;
     try {

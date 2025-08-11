@@ -18,6 +18,14 @@ body {
   font-weight: bold;
 }
 
+.receipt-table {
+  width: 100%;
+}
+
+.receipt-table th {
+  text-align: left;
+}
+
 .settings-link {
   margin-top: 20px;
   text-align: center;

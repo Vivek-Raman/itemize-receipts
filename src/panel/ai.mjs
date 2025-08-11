@@ -1,18 +1,6 @@
-const scanReceipt = async (logger, formData) => {
-  const receiptFile = formData.get('receipt');
+import { getApiKey } from "./storage.mjs";
 
-  logger.log("Scanning receipt...");
-  const response = await submitPrompt(receiptFile);
-  logger.log("Parsing generated response...");
-  const contents = await parseResponse(response);
-  logger.log("Drawing contents to panel...");
-  drawContents(contents);
-  logger.log("All done!");
-
-  // TODO: Handle errors
-};
-
-const submitPrompt = async (image) => {
+export const submitPrompt = async (image) => {
   const systemPrompt = `
     You are a concise and structured tool that will look at a receipt and return a JSON object that contains:
     - 'storeName' (string) : The name of the store
@@ -64,7 +52,7 @@ const submitPrompt = async (image) => {
   return data;
 }
 
-const parseResponse = (response) => {
+export const parseResponse = (response) => {
   const raw = response.choices[0].message.content;
 
   // Handle markdown-wrapped JSON responses
@@ -87,34 +75,6 @@ const parseResponse = (response) => {
   return json;
 }
 
-const drawContents = (contents) => {
-  const container = document.getElementById('contents');
-  container.innerHTML = `
-    <div class="receipt-info">
-      <p><strong>Store</strong>: ${contents.storeName}</p>
-      <p><strong>Date</strong>: ${contents.date}</p>
-    </div>
-    <table class="receipt-table">
-      <thead>
-        <tr>
-          <th>Line Item</th>
-          <th>Price</th>
-          <th>Selected</th>
-        </tr>
-      </thead>
-      <tbody>
-      ${contents.items.map(item => `
-        <tr>
-          <td>${item.name}</td>
-          <td>${item.price}</td>
-          <td><input type="checkbox" /></td>
-        </tr>
-      `).join('\n')}
-      </tbody>
-    </table>
-  `;
-}
-
 const fileToBase64 = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -127,28 +87,3 @@ const fileToBase64 = (file) => {
     reader.onerror = error => reject(error);
   });
 };
-
-
-const getApiKey = async () => {
-  const result = await chrome.storage.sync.get(['openrouterApiKey']);
-  return result.openrouterApiKey;
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-  const logger = new Logger();
-  const form = document.querySelector("form");
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(form);
-    scanReceipt(logger, formData);
-  });
-
-  // Add settings link functionality
-  const settingsLink = document.getElementById('openSettings');
-  settingsLink.addEventListener('click', (event) => {
-    event.preventDefault();
-    chrome.runtime.openOptionsPage();
-  });
-});
