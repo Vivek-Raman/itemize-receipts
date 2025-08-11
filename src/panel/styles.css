@@ -17,3 +17,18 @@ body {
 .upload-form label {
   font-weight: bold;
 }
+
+.settings-link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.settings-link a {
+  color: #007cba;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.settings-link a:hover {
+  text-decoration: underline;
+}

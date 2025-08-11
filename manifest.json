@@ -22,7 +22,9 @@
     "128": "public/192.png"
   },
   "permissions": [
-    "sidePanel"
+    "activeTab",
+    "sidePanel",
+    "storage"
   ],
   "side_panel": {
     "default_path": "src/panel/index.html"

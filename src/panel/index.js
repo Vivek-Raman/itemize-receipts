@@ -1,60 +1,59 @@
-
-
-const scanReceipt = async (formData) => {
-  const apiKey = formData.get('apiKey');
+const scanReceipt = async (logger, formData) => {
   const receiptFile = formData.get('receipt');
 
-  console.debug("Scanning receipt");
-  const response = await submitPrompt(apiKey, receiptFile);
-  console.debug("Receipt scanned");
+  logger.log("Scanning receipt...");
+  const response = await submitPrompt(receiptFile);
+  logger.log("Parsing generated response...");
+  const contents = await parseResponse(response);
+  logger.log("Drawing contents to panel...");
+  drawContents(contents);
+  logger.log("All done!");
 
+  // TODO: Handle errors
 };
 
-/**
- * Submits a receipt image to the OpenRouter API for analysis
- * @param {File} image - The receipt image file from the HTML form input
- */
-
-const submitPrompt = async (apiKey, image) => {
-  const base64Image = await fileToBase64(image);
-
+const submitPrompt = async (image) => {
   const systemPrompt = `
     You are a concise and structured tool that will look at a receipt and return a JSON object that contains:
     - 'storeName' (string) : The name of the store
     - 'date' (ISO 8601 formatted string) : The date of the receipt
-    - 'tax' (number) : The tax amount of the receipt
-    - 'tip' (number) : The tip amount of the receipt
+    - 'tax' (number) : The amount of tax in the receipt. This is NOT the subtotal - just the tax amount.
+    - 'tip' (number) : The tip amount of the receipt, if present.
     - 'items' (array) : An array of items on the receipt. Each item should have the following properties:
       - 'name' (string) : The name of the item
       - 'price' (number) : The price of the item
     - 'total' (number) : The final total price of the receipt, including tax and tips.
-  `;
+  `.trim();
 
+  const base64Image = await fileToBase64(image);
+  const userPrompt = [
+    {
+      type: 'image_url',
+      image_url: {
+        url: `data:${image.type};base64,${base64Image}`,
+      },
+    },
+  ];
+
+  const apiKey = await getApiKey();
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": "https://itemize.vivekraman.dev",
-      "X-Title": "Itemize Receipts",
+      "HTTP-Referer": "https://finance.vivekraman.dev",
+      "X-Title": "Vivek's Finance Manager",
     },
     body: JSON.stringify({
-      "model": "google/gemma-3-12b-it:free",
-      "messages": [
+      model: "google/gemma-3-12b-it:free",
+      messages: [
         {
-          "role": "system",
-          "content": systemPrompt,
+          role: "system",
+          content: systemPrompt,
         },
         {
-          "role": "user",
-          "content": [
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:${image.type};base64,${base64Image}`,
-              },
-            },
-          ],
+          role: "user",
+          content: userPrompt,
         },
       ],
     })
@@ -65,7 +64,57 @@ const submitPrompt = async (apiKey, image) => {
   return data;
 }
 
-// Helper function to convert file to base64
+const parseResponse = (response) => {
+  const raw = response.choices[0].message.content;
+
+  // Handle markdown-wrapped JSON responses
+  let jsonString = raw;
+
+  if (raw.includes('```json')) {
+    const match = raw.match(/```json\s*([\s\S]*?)\s*```/);
+    if (match) {
+      jsonString = match[1].trim();
+    }
+  } else if (raw.includes('```')) {
+    const match = raw.match(/```\s*([\s\S]*?)\s*```/);
+    if (match) {
+      jsonString = match[1].trim();
+    }
+  }
+
+  const json = JSON.parse(jsonString);
+  console.trace("Parsed JSON", json);
+  return json;
+}
+
+const drawContents = (contents) => {
+  const container = document.getElementById('contents');
+  container.innerHTML = `
+    <div class="receipt-info">
+      <p><strong>Store</strong>: ${contents.storeName}</p>
+      <p><strong>Date</strong>: ${contents.date}</p>
+    </div>
+    <table class="receipt-table">
+      <thead>
+        <tr>
+          <th>Line Item</th>
+          <th>Price</th>
+          <th>Selected</th>
+        </tr>
+      </thead>
+      <tbody>
+      ${contents.items.map(item => `
+        <tr>
+          <td>${item.name}</td>
+          <td>${item.price}</td>
+          <td><input type="checkbox" /></td>
+        </tr>
+      `).join('\n')}
+      </tbody>
+    </table>
+  `;
+}
+
 const fileToBase64 = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -79,13 +128,27 @@ const fileToBase64 = (file) => {
   });
 };
 
+
+const getApiKey = async () => {
+  const result = await chrome.storage.sync.get(['openrouterApiKey']);
+  return result.openrouterApiKey;
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+  const logger = new Logger();
   const form = document.querySelector("form");
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
 
     const formData = new FormData(form);
-    scanReceipt(formData);
+    scanReceipt(logger, formData);
+  });
+
+  // Add settings link functionality
+  const settingsLink = document.getElementById('openSettings');
+  settingsLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    chrome.runtime.openOptionsPage();
   });
 });

@@ -6,6 +6,22 @@
     <title>Settings</title>
   </head>
   <body>
-    <h1>Settings</h1>
+    <h1>Itemize Receipts Settings</h1>
+
+    <form id="settingsForm">
+      <div class="form-group">
+        <label for="apiKey">OpenRouter API Key</label>
+        <input type="text" name="apiKey" id="apiKey" placeholder="Enter your OpenRouter API key" />
+        <p style="font-size: 12px; color: #666; margin-top: 5px;">
+          Get your API key from <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a>
+        </p>
+      </div>
+
+      <button type="submit">Save Settings</button>
+    </form>
+
+    <div id="status" class="status"></div>
+
+    <script src="options.js"></script>
   </body>
 </html>
