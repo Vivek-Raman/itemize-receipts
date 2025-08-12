@@ -14,6 +14,9 @@
   "background": {
     "service_worker": "src/worker.js"
   },
+  "side_panel": {
+    "default_path": "src/panel/index.html"
+  },
   "options_page": "src/options/options.html",
   "icons": {
     "16": "public/16.png",
@@ -21,12 +24,22 @@
     "48": "public/48.png",
     "128": "public/192.png"
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://secure.splitwise.com/*"
+      ],
+      "js": [
+        "src/content/splitwise-content.js"
+      ]
+    }
+  ],
   "permissions": [
-    "activeTab",
+    "scripting",
     "sidePanel",
     "storage"
   ],
-  "side_panel": {
-    "default_path": "src/panel/index.html"
-  }
+  "host_permissions": [
+    "https://secure.splitwise.com/*"
+  ]
 }

@@ -1,6 +1,6 @@
 import { parseResponse, submitPrompt } from "./js/ai.mjs";
 import { Logger } from "./js/logger.mjs";
-import { trySplitwise } from "./js/splitwise.mjs";
+import { handleSplitwiseTabActive } from "./js/splitwise.mjs";
 import { loadPersistedContents, persistContents } from "./js/storage.mjs";
 import { drawContents, handleLinks } from "./js/view.mjs";
 
@@ -29,7 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadPersistedContents(logger);
   handleLinks();
-  trySplitwise();
+
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'splitwise-tab-active') {
+      handleSplitwiseTabActive();
+    }
+  });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
