@@ -1,4 +1,6 @@
-export const populateSettings = (settings) => {
+import { loadAvailableModels } from "./models.mjs";
+
+export const populateSettings = async (settings) => {
   const apiUrlSelect = document.getElementById('apiUrlSelect');
   apiUrlSelect.value = settings.apiUrlSelect;
   handleChangeToApiUrlSelect(settings.apiUrlSelect);
@@ -8,6 +10,17 @@ export const populateSettings = (settings) => {
 
   const apiKey = document.getElementById('apiKey');
   apiKey.value = settings.apiKey;
+
+  const modelSelector = document.getElementById('available-models');
+  const models = await loadAvailableModels(settings, true);
+  models?.forEach(model => {
+    const option = document.createElement('option');
+    option.value = model.id;
+    option.textContent = `${model.id} (${model.price})`;
+    option.selected = settings.models?.includes(model.id);
+    modelSelector.appendChild(option);
+  });
+
 }
 
 export const handleChangeToApiUrlSelect = (formValue) => {

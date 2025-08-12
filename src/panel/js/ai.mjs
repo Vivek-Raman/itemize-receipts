@@ -1,6 +1,8 @@
-import { getApiKey } from "./storage.mjs";
+import { fetchSettings } from "./storage.mjs";
 
 export const submitPrompt = async (image) => {
+  const { apiUrl, apiKey } = await fetchSettings();
+
   const systemPrompt = `
     You are a concise and structured tool that will look at a receipt and return a JSON object that contains:
     - 'storeName' (string) : The name of the store
@@ -23,8 +25,7 @@ export const submitPrompt = async (image) => {
     },
   ];
 
-  const apiKey = await getApiKey();
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const response = await fetch(`${apiUrl}/chat/completions`, {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${apiKey}`,

@@ -19,7 +19,11 @@ export const loadPersistedContents = async (logger) => {
   }
 }
 
-export const getApiKey = async () => {
-  const result = await chrome.storage.sync.get(['openrouterApiKey']);
-  return result.openrouterApiKey;
+export const fetchSettings = async () => {
+  const result = await chrome.storage.sync.get(['apiUrl', 'apiKey']);
+  const doc = {
+    apiUrl: result.apiUrl,
+    apiKey: result.apiKey,
+  };
+  return doc;
 };

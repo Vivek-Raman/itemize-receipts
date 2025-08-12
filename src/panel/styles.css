@@ -27,3 +27,7 @@ body {
 #receipt-footer {
   text-align: right;
 }
+
+.footer-links {
+  justify-content: center;
+}

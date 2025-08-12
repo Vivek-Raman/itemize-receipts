@@ -32,6 +32,7 @@
           <input type="text" disabled
             name="apiUrl" id="apiUrl"
             placeholder="https://api.openai.com/v1"
+            required
             autocomplete="off" />
         </div>
 
@@ -39,7 +40,15 @@
           <label for="apiKey">API Key</label>
           <input type="password"
             name="apiKey" id="apiKey"
+            required
             placeholder="sk-or-v1-..." />
+        </div>
+
+        <div>
+          <label for="models">Models</label>
+          <select multiple name="models" id="available-models">
+          </select>
+          <button id="refresh-models">Refresh</button>
         </div>
       </form>
 

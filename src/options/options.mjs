@@ -3,9 +3,16 @@ import { handleChangeToApiUrlSelect, handleLinks, populateSettings } from './vie
 
 document.addEventListener('DOMContentLoaded', async () => {
   const settings = await loadSettings();
-  populateSettings(settings);
+  await populateSettings(settings);
 
   handleLinks();
+
+  const refreshModelsButton = document.getElementById('refresh-models');
+  refreshModelsButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const settings = await loadSettings();
+    await populateSettings(settings);
+  });
 });
 
 const form = document.getElementById('settings');
