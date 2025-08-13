@@ -12,7 +12,9 @@
     <main>
       <h1>Itemize Receipts</h1>
       <form id="upload-form">
-        <input type="file" name="receipt" id="receipt" accept="image/*" />
+        <input type="file" required
+          name="receipt" id="receipt"
+          accept="image/*" />
 
         <div>
           <label for="passphrase">Passphrase</label>
@@ -21,8 +23,10 @@
             placeholder="Enter your passphrase" />
         </div>
 
-        <button type="submit" id="scanReceipt">Scan Receipt</button>
-        <button type="reset" id="clearReceipt">Clear Receipt</button>
+        <div class="submit-reset">
+          <button type="submit" id="scanReceipt">Scan Receipt</button>
+          <button type="reset" id="clearReceipt">Clear Receipt</button>
+        </div>
       </form>
 
       <div id="logger"></div>
@@ -36,16 +40,16 @@
           <table class="receipt-table">
             <thead>
               <tr>
+                <th class="selected"></th>
                 <th class="line-item">Line Item</th>
                 <th class="price">Price</th>
-                <th class="selected">Selected</th>
               </tr>
             </thead>
             <tbody id="receipt-table-body">
               <tr>
+                <td class="selected">-</td>
                 <td class="line-item">-</td>
                 <td class="price">-</td>
-                <td class="selected">-</td>
               </tr>
             </tbody>
           </table>

@@ -2,9 +2,25 @@ body {
   text-align: center;
 }
 
+#upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  align-items: center;
+  justify-content: center ;
+}
+
+.submit-reset {
+  margin-top: .5rem;
+}
+
+#logger {
+  margin-block: 1rem;
+}
+
 .receipt {
   border: 1px solid #ccc;
-  margin-top: 2rem;
+  margin-top: 1rem;
   padding: 1rem;
 }
 
@@ -21,7 +37,7 @@ body {
 }
 
 .receipt-table .selected {
-  text-align: right;
+  text-align: left;
 }
 
 #receipt-footer {

@@ -1,4 +1,6 @@
 export const drawContents = async (contents) => {
+  if (!contents) return;
+
   const receiptHeader = document.getElementById('receipt-header');
   receiptHeader.innerHTML = `
     <p><strong>${contents.storeName}</strong></p>
@@ -8,9 +10,11 @@ export const drawContents = async (contents) => {
   const receiptBody = document.getElementById('receipt-table-body');
   receiptBody.innerHTML = `${contents.items.map((item, index) => `
     <tr>
+      <td class="selected">
+        <input type="checkbox" name="line-item-${index}" checked=${item.selected} />
+      </td>
       <td class="line-item">${item.name.toLowerCase()}</td>
       <td class="price">${item.price.toFixed(2)}</td>
-      <td class="selected"><input type="checkbox" name="line-item-${index}" checked /></td>
     </tr>
   `.trim()).join('\n')}`;
 
