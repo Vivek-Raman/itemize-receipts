@@ -26,7 +26,7 @@ async function tryAddAutofillButton() {
 
   const contents = await fetchContents();
   if (!contents) {
-
+    return;
   }
 
   const autofillButton = document.createElement('button');
@@ -34,7 +34,7 @@ async function tryAddAutofillButton() {
   autofillButton.innerText = `Autofill receipt from ${contents.storeName}`;
   autofillButton.addEventListener('click', (event) => {
     event.preventDefault();
-    doAutofill(contents);
+    doAutofill();
   });
 
   document.querySelector(DONE_BTN_SELECTOR).parentElement.appendChild(autofillButton);
@@ -42,69 +42,152 @@ async function tryAddAutofillButton() {
 
 async function fetchContents() {
   // TODO: Fetch from storage
-  // const { contents } = await chrome.storage.local.get('contents');
-  const contents = {
-    "date": "2025-05-21",
-    "items": [
-      {
-        "name": "KANAN PLN PARATA 2KG",
-        "price": 11.99
-      },
-      {
-        "name": "VKNGR CREAM OF BROCC",
-        "price": 1.79
-      },
-      {
-        "name": "VKNGR SUNFLOWER OIL",
-        "price": 1.79
-      },
-      {
-        "name": "VKNGR MUSHROOM SOUP",
-        "price": 1.79
-      },
-      {
-        "name": "CHING'S TOMATO SOUP",
-        "price": 1.69
-      },
-      {
-        "name": "31 PARIPPU",
-        "price": 3.49
-      },
-      {
-        "name": "VEER GHEE 16 OZ",
-        "price": 1.99
-      },
-      {
-        "name": "VRIG SUNFLOWER OIL 1",
-        "price": 3.99
-      },
-      {
-        "name": "3B TAJ MAHAL",
-        "price": 3.49
-      },
-      {
-        "name": "DEEP CINNAMON STICKS",
-        "price": 1.99
-      },
-      {
-        "name": "SAMOSA& SPRING ROLL",
-        "price": 6.6
-      },
-      {
-        "name": "BREAD",
-        "price": 1.5
-      }
-    ],
-    "storeName": "store2k.com",
-    "tax": 58.57,
-    "tip": null,
-    "total": 59.17
-  };
+  const { contents } = await chrome.storage.local.get('contents');
+  // const contents = {
+  //   "date": "2025-05-21",
+  //   "items": [
+  //     {
+  //       "name": "KANAN PLN PARATA 2KG",
+  //       "price": 11.99
+  //     },
+  //     {
+  //       "name": "VKNGR CREAM OF BROCC",
+  //       "price": 1.79
+  //     },
+  //     {
+  //       "name": "VKNGR SUNFLOWER OIL",
+  //       "price": 1.79
+  //     },
+  //     {
+  //       "name": "VKNGR MUSHROOM SOUP",
+  //       "price": 1.79
+  //     },
+  //     {
+  //       "name": "CHING'S TOMATO SOUP",
+  //       "price": 1.69
+  //     },
+  //     {
+  //       "name": "31 PARIPPU",
+  //       "price": 3.49
+  //     },
+  //     {
+  //       "name": "VEER GHEE 16 OZ",
+  //       "price": 1.99
+  //     },
+  //     {
+  //       "name": "VRIG SUNFLOWER OIL 1",
+  //       "price": 3.99
+  //     },
+  //     {
+  //       "name": "3B TAJ MAHAL",
+  //       "price": 3.49
+  //     },
+  //     {
+  //       "name": "DEEP CINNAMON STICKS",
+  //       "price": 1.99
+  //     },
+  //     {
+  //       "name": "SAMOSA& SPRING ROLL",
+  //       "price": 6.6
+  //     },
+  //     {
+  //       "name": "BREAD",
+  //       "price": 1.5
+  //     }
+  //   ],
+  //   "storeName": "store2k.com",
+  //   "tax": 58.57,
+  //   "tip": null,
+  //   "total": 59.17
+  // };
 
-  console.log(contents);
   return contents;
 }
 
-async function doAutofill(contents) {
+const LINE_ITEMS_TABLE_ID = "item_holder";
+const LINE_ITEM_ROW_SELECTOR = "#item_holder > tr.itemized_item > td.input";
+const LINE_ITEM_NAME_SELECTOR = LINE_ITEM_ROW_SELECTOR + " > input[name='item_name']";
+const LINE_ITEM_PRICE_SELECTOR = LINE_ITEM_ROW_SELECTOR + " > input[name='amount']";
 
+function setInputValueAndNotify(input, value) {
+  const previousValue = input.value;
+  const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+  if (nativeSetter) {
+    nativeSetter.call(input, value);
+  } else {
+    input.value = value;
+  }
+
+  // Keep attribute in sync for any consumers reading attributes instead of properties
+  input.setAttribute('value', value);
+
+  // If it's a number input, also clear valueAsNumber to ensure model updates
+  try {
+    if (input.type === 'number') {
+      input.valueAsNumber = Number.NaN;
+    }
+  } catch (_) { }
+
+  // React-specific: ensure its internal value tracker sees the change
+  const valueTracker = input._valueTracker || input.__valueTracker;
+  if (valueTracker) {
+    valueTracker.setValue(previousValue);
+  }
+
+  // Simulate a realistic interaction sequence so various handlers react
+  const eventInit = { bubbles: true, composed: true, cancelable: true };
+  input.dispatchEvent(new FocusEvent('focus', eventInit));
+  input.dispatchEvent(new Event('focusin', eventInit));
+
+  try {
+    input.dispatchEvent(new InputEvent('beforeinput', { ...eventInit, inputType: 'deleteContentBackward', data: null }));
+  } catch (_) {
+    input.dispatchEvent(new Event('beforeinput', eventInit));
+  }
+
+  input.dispatchEvent(new KeyboardEvent('keydown', { ...eventInit, key: 'Backspace', code: 'Backspace' }));
+  try {
+    input.dispatchEvent(new InputEvent('input', { ...eventInit, inputType: 'deleteContentBackward', data: null }));
+  } catch (_) {
+    input.dispatchEvent(new Event('input', eventInit));
+  }
+  input.dispatchEvent(new KeyboardEvent('keyup', { ...eventInit, key: 'Backspace', code: 'Backspace' }));
+
+  input.dispatchEvent(new Event('change', eventInit));
+  input.dispatchEvent(new Event('focusout', eventInit));
+  input.dispatchEvent(new FocusEvent('blur', eventInit));
+}
+
+async function doAutofill() {
+  // fetch fresh contents to account for time-of-fetch vs time-of-use differences
+  const contents = await fetchContents();
+  if (!contents) {
+    return;
+  }
+
+  const table = document.getElementById(LINE_ITEMS_TABLE_ID);
+  if (!table) {
+    console.error("Line items table not found");
+    return;
+  }
+
+  // clear all existing line items
+  [
+    ...table.querySelectorAll(LINE_ITEM_NAME_SELECTOR),
+    ...table.querySelectorAll(LINE_ITEM_PRICE_SELECTOR),
+  ].forEach(field => {
+    setInputValueAndNotify(field, "");
+  });
+
+  // populate line items
+  contents.items.forEach((item, index) => {
+    const nameField = table.querySelectorAll(LINE_ITEM_NAME_SELECTOR)[index];
+    const priceField = table.querySelectorAll(LINE_ITEM_PRICE_SELECTOR)[index];
+    setInputValueAndNotify(nameField, item.name.toLowerCase());
+    setInputValueAndNotify(priceField, item.price.toFixed(2));
+  });
+
+  // Encourage any container-level listeners to recompute
+  table.dispatchEvent(new Event('input', { bubbles: true }));
+  table.dispatchEvent(new Event('change', { bubbles: true }));
 }
