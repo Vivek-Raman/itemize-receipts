@@ -9,7 +9,10 @@ export const populateSettings = async (settings) => {
   apiUrl.value = settings.apiUrl ?? '';
 
   const apiKey = document.getElementById('apiKey');
-  apiKey.value = settings.apiKey;
+  if (apiKey) {
+    apiKey.value = '';
+    apiKey.placeholder = 'Stored securely (enter to replace)';
+  }
 
   const modelSelector = document.getElementById('available-models');
   const models = await loadAvailableModels(settings, true);

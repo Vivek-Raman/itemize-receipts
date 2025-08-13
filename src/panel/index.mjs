@@ -6,21 +6,25 @@ import { drawContents, handleLinks } from "./js/view.mjs";
 
 const scanReceipt = async (logger, formData) => {
   const receiptFile = formData.get('receipt');
+  const passphrase = formData.get('passphrase');
 
-  logger.log("Scanning receipt...");
-  const response = await submitPrompt(receiptFile);
+  try {
+    logger.log("Scanning receipt...");
+    const response = await submitPrompt(receiptFile, passphrase);
 
-  logger.log("Parsing generated response...");
-  const contents = await parseResponse(response);
+    logger.log("Parsing generated response...");
+    const contents = await parseResponse(response);
 
-  logger.log("Persisting contents to session storage...");
-  await persistContents(contents);
+    logger.log("Persisting contents to session storage...");
+    await persistContents(contents);
 
-  logger.log("Drawing contents to panel...");
-  await drawContents(contents);
-  logger.log("All done!");
-
-  // TODO: Handle errors
+    logger.log("Drawing contents to panel...");
+    await drawContents(contents);
+    logger.log("All done!");
+  } catch (error) {
+    console.error(error);
+    logger.log(error?.message ?? 'An error occurred.');
+  }
 };
 
 document.addEventListener("DOMContentLoaded", () => {

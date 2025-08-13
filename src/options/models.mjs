@@ -1,7 +1,31 @@
+import { decryptStringWithPassphrase } from "../common/crypto.mjs";
+
 export const loadAvailableModels = async (settings, freeOnly = false) => {
+  let apiKey = settings?.apiKey;
+
+  if (!apiKey) {
+    const passphraseInput = document.getElementById('passphrase');
+    const passphrase = passphraseInput?.value?.trim();
+    if (passphrase) {
+      const { apiKeyEnc } = await chrome.storage.local.get(['apiKeyEnc']);
+      if (apiKeyEnc) {
+        try {
+          apiKey = await decryptStringWithPassphrase({ encrypted: apiKeyEnc, passphrase });
+        } catch (e) {
+          console.warn('Failed to decrypt API key for model loading:', e?.message ?? e);
+          return [];
+        }
+      }
+    }
+  }
+
+  if (!apiKey) {
+    return [];
+  }
+
   const response = await fetch(`${settings.apiUrl}/models`, {
     headers: {
-      "Authorization": `Bearer ${settings.apiKey}`,
+      "Authorization": `Bearer ${apiKey}`,
     }
   });
 

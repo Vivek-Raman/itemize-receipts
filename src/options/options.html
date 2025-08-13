@@ -45,6 +45,18 @@
         </div>
 
         <div>
+          <label for="passphrase">Passphrase (used to encrypt API Key)</label>
+          <input type="password" required
+            name="passphrase" id="passphrase"
+            placeholder="Enter a passphrase to encrypt your key"
+            autocomplete="new-password" />
+        </div>
+
+        <div>
+          <button id="save-secret" type="button">Save API Key Securely</button>
+        </div>
+
+        <div>
           <label for="models">Models</label>
           <select multiple name="models" id="available-models">
           </select>

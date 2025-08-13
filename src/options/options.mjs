@@ -13,6 +13,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const settings = await loadSettings();
     await populateSettings(settings);
   });
+
+  const saveSecretButton = document.getElementById('save-secret');
+  if (saveSecretButton) {
+    saveSecretButton.addEventListener('click', async (event) => {
+      event.preventDefault();
+      await saveSettings(document.getElementById('settings'));
+    });
+  }
 });
 
 const form = document.getElementById('settings');
