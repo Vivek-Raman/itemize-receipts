@@ -11,7 +11,8 @@ export const drawContents = async (contents) => {
   receiptBody.innerHTML = `${contents.items.map((item, index) => `
     <tr>
       <td class="selected">
-        <input type="checkbox" name="line-item-${index}" checked=${item.selected} />
+        <!-- TODO: This should do something, but I am lazy -->
+        <input type="checkbox" name="line-item-${index}" checked disabled />
       </td>
       <td class="line-item">${item.name.toLowerCase()}</td>
       <td class="price">${item.price.toFixed(2)}</td>

@@ -41,66 +41,7 @@ async function tryAddAutofillButton() {
 }
 
 async function fetchContents() {
-  // TODO: Fetch from storage
   const { contents } = await chrome.storage.local.get('contents');
-  // const contents = {
-  //   "date": "2025-05-21",
-  //   "items": [
-  //     {
-  //       "name": "KANAN PLN PARATA 2KG",
-  //       "price": 11.99
-  //     },
-  //     {
-  //       "name": "VKNGR CREAM OF BROCC",
-  //       "price": 1.79
-  //     },
-  //     {
-  //       "name": "VKNGR SUNFLOWER OIL",
-  //       "price": 1.79
-  //     },
-  //     {
-  //       "name": "VKNGR MUSHROOM SOUP",
-  //       "price": 1.79
-  //     },
-  //     {
-  //       "name": "CHING'S TOMATO SOUP",
-  //       "price": 1.69
-  //     },
-  //     {
-  //       "name": "31 PARIPPU",
-  //       "price": 3.49
-  //     },
-  //     {
-  //       "name": "VEER GHEE 16 OZ",
-  //       "price": 1.99
-  //     },
-  //     {
-  //       "name": "VRIG SUNFLOWER OIL 1",
-  //       "price": 3.99
-  //     },
-  //     {
-  //       "name": "3B TAJ MAHAL",
-  //       "price": 3.49
-  //     },
-  //     {
-  //       "name": "DEEP CINNAMON STICKS",
-  //       "price": 1.99
-  //     },
-  //     {
-  //       "name": "SAMOSA& SPRING ROLL",
-  //       "price": 6.6
-  //     },
-  //     {
-  //       "name": "BREAD",
-  //       "price": 1.5
-  //     }
-  //   ],
-  //   "storeName": "store2k.com",
-  //   "tax": 58.57,
-  //   "tip": null,
-  //   "total": 59.17
-  // };
-
   return contents;
 }
 

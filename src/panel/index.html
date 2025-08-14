@@ -12,15 +12,17 @@
     <main>
       <h1>Itemize Receipts</h1>
       <form id="upload-form">
-        <input type="file" required
-          name="receipt" id="receipt"
-          accept="image/*" />
-
         <div>
           <label for="passphrase">Passphrase</label>
           <input type="password" required
             name="passphrase" id="passphrase"
             placeholder="Enter your passphrase" />
+        </div>
+
+        <div>
+          <input type="file" required
+            name="receipt" id="receipt"
+            accept="image/*" />
         </div>
 
         <div class="submit-reset">
@@ -59,8 +61,6 @@
             <p><strong>Total</strong>: 0.00</p>
           </div>
         </form>
-        <div id="splitwise-container">
-        </div>
       </div>
     </main>
     <footer>
