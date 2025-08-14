@@ -15,7 +15,7 @@ export const populateSettings = async (settings) => {
   }
 
   const modelSelector = document.getElementById('available-models');
-  const models = await loadAvailableModels(settings, true);
+  const models = await loadAvailableModels(settings);
   models?.forEach(model => {
     const option = document.createElement('option');
     option.value = model.id;

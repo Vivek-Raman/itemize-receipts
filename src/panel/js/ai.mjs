@@ -1,7 +1,4 @@
-import { fetchSettings } from "./storage.mjs";
-
-export const submitPrompt = async (image, passphrase) => {
-  const { apiUrl, apiKey } = await fetchSettings(passphrase);
+export const submitPrompt = async (image, apiUrl, apiKey) => {
 
   const systemPrompt = `
     You are a concise and structured tool that will look at a receipt and return a JSON object that contains:

@@ -10,3 +10,17 @@ body {
 body > * {
   margin: 1rem;
 }
+
+#settings {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+#available-models {
+  height: 10rem;
+}
+
+#buttons {
+  margin-top: .5rem;
+}

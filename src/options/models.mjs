@@ -1,10 +1,9 @@
 import { decryptStringWithPassphrase } from "../common/crypto.mjs";
 
-export const loadAvailableModels = async (settings, freeOnly = false) => {
+export const loadAvailableModels = async (settings) => {
   let apiKey = settings?.apiKey;
 
   if (!apiKey) {
-    const passphraseInput = document.getElementById('passphrase');
     const passphrase = passphraseInput?.value?.trim();
     if (passphrase) {
       const { apiKeyEnc } = await chrome.storage.local.get(['apiKeyEnc']);
@@ -20,6 +19,7 @@ export const loadAvailableModels = async (settings, freeOnly = false) => {
   }
 
   if (!apiKey) {
+    console.log('No API key found');
     return [];
   }
 
@@ -34,15 +34,14 @@ export const loadAvailableModels = async (settings, freeOnly = false) => {
 
   return models.data.filter(model => {
     const supportsImage = model?.architecture?.input_modalities?.includes("image");
-    const isFree = getPrice(model) === 0;
-    return supportsImage && (freeOnly ? isFree : true);
+    return supportsImage;
   }).map(model => {
     return {
       id: model.id,
       name: model.name,
       price: getPrice(model),
     }
-  });
+  }).sort((a, b) => a.price - b.price);
 }
 
 const getPrice = (model) => {

@@ -1,6 +1,6 @@
 import { parseResponse, submitPrompt } from "./js/ai.mjs";
 import { Logger } from "./js/logger.mjs";
-import { loadPersistedContents, persistContents } from "./js/storage.mjs";
+import { clearContents, loadPersistedContents, persistContents } from "./js/storage.mjs";
 import { drawContents, handleLinks } from "./js/view.mjs";
 
 const scanReceipt = async (logger, formData) => {
@@ -8,8 +8,20 @@ const scanReceipt = async (logger, formData) => {
   const passphrase = formData.get('passphrase');
 
   try {
+    if (!receiptFile) {
+      throw new Error('No receipt file provided.');
+    }
+    if (!passphrase) {
+      throw new Error('No passphrase provided.');
+    }
+
+    const { apiUrl, apiKey } = await fetchSettings(passphrase);
+    if (!apiUrl || !apiKey) {
+      throw new Error('No API key found. Click on "Settings" below to configure.');
+    }
+
     logger.log("Scanning receipt...");
-    const response = await submitPrompt(receiptFile, passphrase);
+    const response = await submitPrompt(receiptFile, apiUrl, apiKey);
 
     logger.log("Parsing generated response...");
     const contents = await parseResponse(response);
@@ -19,6 +31,7 @@ const scanReceipt = async (logger, formData) => {
 
     logger.log("Drawing contents to panel...");
     await drawContents(contents);
+
     logger.log("All done!");
   } catch (error) {
     console.error(error);
@@ -36,10 +49,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   handleLinks();
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-
     const formData = new FormData(form);
-    scanReceipt(logger, formData);
+    await scanReceipt(logger, formData);
+  });
+
+  form.addEventListener("reset", async (event) => {
+    event.preventDefault();
+    await clearContents();
+    await drawContents(null);
+    logger.log("Upload a new receipt to get started.");
   });
 });

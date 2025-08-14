@@ -11,14 +11,16 @@
 
   <body>
     <main>
-      <h1>Settings</h1>
+      <h1>Itemize Receipts - Settings</h1>
+      <ul>
+        <li>Select your provider and paste your API key.</li>
+        <li>Enter a passphrase to encrypt your key.</li>
+        <li>Then, click on "Refresh" to see the available models.</li>
+        <li>Select the models you want to use.</li>
+        <li>Click on "Save Settings" to save your changes.</li>
+      </ul>
 
       <form id="settings">
-        <h2>AI Settings</h2>
-        <p>
-          Configure the AI settings for the extension.
-        </p>
-
         <div>
           <label for="apiUrlSelect">OpenAI-compatible URL</label>
           <select name="apiUrlSelect" id="apiUrlSelect">
@@ -53,18 +55,16 @@
         </div>
 
         <div>
-          <button id="save-secret" type="button">Save API Key Securely</button>
-        </div>
-
-        <div>
           <label for="models">Models</label>
           <select multiple name="models" id="available-models">
           </select>
           <button id="refresh-models">Refresh</button>
         </div>
-      </form>
 
-      <div id="status" class="status"></div>
+        <div id="buttons">
+          <button id="save-settings" type="button">Save Settings</button>
+        </div>
+      </form>
     </main>
     <footer>
       <div class="footer-links">

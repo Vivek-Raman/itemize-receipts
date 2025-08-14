@@ -1,13 +1,22 @@
 export const drawContents = async (contents) => {
-  if (!contents) return;
-
   const receiptHeader = document.getElementById('receipt-header');
+  const receiptBody = document.getElementById('receipt-table-body');
+  const receiptFooter = document.getElementById('receipt-footer');
+
+  if (!contents) {
+    receiptHeader.innerHTML = `
+      <p>Scan a receipt to get started</p>
+    `.trim();
+    receiptBody.innerHTML = ``;
+    receiptFooter.innerHTML = ``;
+    return;
+  }
+
   receiptHeader.innerHTML = `
     <p><strong>${contents.storeName}</strong></p>
     <p>${contents.date}</p>
   `.trim();
 
-  const receiptBody = document.getElementById('receipt-table-body');
   receiptBody.innerHTML = `${contents.items.map((item, index) => `
     <tr>
       <td class="selected">
@@ -19,7 +28,6 @@ export const drawContents = async (contents) => {
     </tr>
   `.trim()).join('\n')}`;
 
-  const receiptFooter = document.getElementById('receipt-footer');
   receiptFooter.innerHTML = `
     <p><strong>Tax</strong>: ${(contents.tax ?? 0).toFixed(2)}</p>
     <p><strong>Tip</strong>: ${(contents.tip ?? 0).toFixed(2)}</p>

@@ -1,5 +1,5 @@
 import { loadSettings, saveSettings } from './storage.mjs';
-import { handleChangeToApiUrlSelect, handleLinks, populateSettings } from './view.mjs';
+import { handleLinks, populateSettings } from './view.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const settings = await loadSettings();
@@ -10,27 +10,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   const refreshModelsButton = document.getElementById('refresh-models');
   refreshModelsButton.addEventListener('click', async (event) => {
     event.preventDefault();
-    const settings = await loadSettings();
-    await populateSettings(settings);
+    await reloadSettings();
   });
-
-  const saveSecretButton = document.getElementById('save-secret');
-  if (saveSecretButton) {
-    saveSecretButton.addEventListener('click', async (event) => {
-      event.preventDefault();
-      await saveSettings(document.getElementById('settings'));
-    });
-  }
 });
 
 const form = document.getElementById('settings');
-form.addEventListener('change', (event) => {
-  const formKey = event.target.name;
-  const formValue = event.target.value;
-
-  if (formKey === 'apiUrlSelect') {
-    handleChangeToApiUrlSelect(formValue);
-  }
-
-  saveSettings(form);
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  await reloadSettings();
 });
+
+const reloadSettings = async () => {
+  await saveSettings(form);
+  const settings = await loadSettings();
+  await populateSettings(settings);
+};
