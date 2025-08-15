@@ -15,8 +15,8 @@
       <ul>
         <li>Select your provider and paste your API key.</li>
         <li>Enter a passphrase to encrypt your key.</li>
-        <li>Then, click on "Refresh" to see the available models.</li>
-        <li>Select the models you want to use.</li>
+        <li>To set, change, or reselect models, click "Refresh" after entering the passphrase.</li>
+        <li>Select the models you want to use. Hold <kbd>Ctrl</kbd> to select multiple models.</li>
         <li>Click on "Save Settings" to save your changes.</li>
       </ul>
 
@@ -42,7 +42,6 @@
           <label for="apiKey">API Key</label>
           <input type="password"
             name="apiKey" id="apiKey"
-            required
             placeholder="sk-or-v1-..." />
         </div>
 
@@ -62,7 +61,7 @@
         </div>
 
         <div id="buttons">
-          <button id="save-settings" type="button">Save Settings</button>
+          <button id="save-settings" type="submit">Save Settings</button>
         </div>
       </form>
     </main>

@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 const form = document.getElementById('settings');
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
-  await reloadSettings();
+  await reloadSettings(form);
 });
 
 const reloadSettings = async () => {

@@ -1,10 +1,9 @@
 import { decryptStringWithPassphrase } from "../common/crypto.mjs";
 
-export const loadAvailableModels = async (settings) => {
+export const loadAvailableModels = async (settings, passphrase) => {
   let apiKey = settings?.apiKey;
 
   if (!apiKey) {
-    const passphrase = passphraseInput?.value?.trim();
     if (passphrase) {
       const { apiKeyEnc } = await chrome.storage.local.get(['apiKeyEnc']);
       if (apiKeyEnc) {
@@ -30,7 +29,6 @@ export const loadAvailableModels = async (settings) => {
   });
 
   const models = await response.json();
-  console.log(models);
 
   return models.data.filter(model => {
     const supportsImage = model?.architecture?.input_modalities?.includes("image");

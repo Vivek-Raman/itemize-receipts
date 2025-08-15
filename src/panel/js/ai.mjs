@@ -1,53 +1,60 @@
-export const submitPrompt = async (image, apiUrl, apiKey) => {
+export const submitPrompt = async (image, apiUrl, apiKey, models) => {
+  try {
+    const systemPrompt = `
+      You are a concise and structured tool that will look at a receipt and return a JSON object that contains:
+      - 'storeName' (string) : The name of the store
+      - 'date' (ISO 8601 formatted string) : The date of the receipt
+      - 'tax' (number) : The amount of tax in the receipt. This is NOT the subtotal - just the tax amount.
+      - 'tip' (number) : The tip amount of the receipt, if present.
+      - 'items' (array) : An array of items on the receipt. Each item should have the following properties:
+        - 'name' (string) : The name of the item
+        - 'price' (number) : The price of the item
+      - 'total' (number) : The final total price of the receipt, including tax and tips.
+    `.trim();
 
-  const systemPrompt = `
-    You are a concise and structured tool that will look at a receipt and return a JSON object that contains:
-    - 'storeName' (string) : The name of the store
-    - 'date' (ISO 8601 formatted string) : The date of the receipt
-    - 'tax' (number) : The amount of tax in the receipt. This is NOT the subtotal - just the tax amount.
-    - 'tip' (number) : The tip amount of the receipt, if present.
-    - 'items' (array) : An array of items on the receipt. Each item should have the following properties:
-      - 'name' (string) : The name of the item
-      - 'price' (number) : The price of the item
-    - 'total' (number) : The final total price of the receipt, including tax and tips.
-  `.trim();
-
-  const base64Image = await fileToBase64(image);
-  const userPrompt = [
-    {
-      type: 'image_url',
-      image_url: {
-        url: `data:${image.type};base64,${base64Image}`,
+    const base64Image = await fileToBase64(image);
+    const userPrompt = [
+      {
+        type: 'image_url',
+        image_url: {
+          url: `data:${image.type};base64,${base64Image}`,
+        },
       },
-    },
-  ];
+    ];
 
-  const response = await fetch(`${apiUrl}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": "https://vivekraman.dev/work/itemize-receipts",
-      "X-Title": "Itemize Receipts",
-    },
-    body: JSON.stringify({
-      model: "google/gemma-3-12b-it:free",
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        {
-          role: "user",
-          content: userPrompt,
-        },
-      ],
-    })
-  });
+    const response = await fetch(`${apiUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://vivekraman.dev/work/itemize-receipts",
+        "X-Title": "Itemize Receipts",
+      },
+      body: JSON.stringify({
+        models: models,
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
+          {
+            role: "user",
+            content: userPrompt,
+          },
+        ],
+      })
+    });
 
-  const data = await response.json();
-  console.trace("Response", data);
-  return data;
+    const data = await response.json();
+    if (data.error) {
+      throw new Error(data.error.message);
+    }
+
+    console.trace("Response", data);
+    return data;
+  } catch (error) {
+    throw new Error("Failed to submit prompt. Check your passphrase or reconfigure the extension. Cause: " + error.message, { cause: error });
+  }
 }
 
 export const parseResponse = (response) => {

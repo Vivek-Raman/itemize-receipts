@@ -15,15 +15,17 @@ export const populateSettings = async (settings) => {
   }
 
   const modelSelector = document.getElementById('available-models');
-  const models = await loadAvailableModels(settings);
+  const passphraseInput = document.getElementById('passphrase');
+  const passphrase = passphraseInput?.value?.trim();
+  const models = await loadAvailableModels(settings, passphrase);
+  modelSelector.innerHTML = '';
   models?.forEach(model => {
     const option = document.createElement('option');
     option.value = model.id;
-    option.textContent = `${model.id} (${model.price})`;
+    option.textContent = `${model.id} (${model.price > 0 ? `$${model.price}` : 'FREE'})`;
     option.selected = settings.models?.includes(model.id);
     modelSelector.appendChild(option);
   });
-
 }
 
 export const handleChangeToApiUrlSelect = (formValue) => {

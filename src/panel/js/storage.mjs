@@ -14,8 +14,12 @@ export const loadPersistedContents = async () => {
 }
 
 export const fetchSettings = async (passphrase) => {
-  const result = await chrome.storage.sync.get(['apiUrl']);
+  const { apiUrl, models } = await chrome.storage.sync.get(['apiUrl', 'models']);
   const { apiKeyEnc } = await chrome.storage.local.get(['apiKeyEnc']);
+
+  if (!models) {
+    throw new Error('No models found. Please select models in Settings.');
+  }
 
   if (!apiKeyEnc) {
     throw new Error('No encrypted API key found. Please save your API key in Settings.');
@@ -24,14 +28,17 @@ export const fetchSettings = async (passphrase) => {
     throw new Error('Passphrase is required to decrypt the API key.');
   }
 
-  const apiKey = await decryptStringWithPassphrase({
-    encrypted: apiKeyEnc,
-    passphrase,
-  });
-
-  const doc = {
-    apiUrl: result.apiUrl,
-    apiKey,
-  };
-  return doc;
+  try {
+    const apiKey = await decryptStringWithPassphrase({
+      encrypted: apiKeyEnc,
+      passphrase,
+    });
+    return {
+      apiUrl,
+      apiKey,
+      models,
+    };
+  } catch (error) {
+    throw new Error('Failed to decrypt the API key. Please check your passphrase and try again.');
+  }
 };
