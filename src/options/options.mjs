@@ -1,5 +1,5 @@
 import { loadSettings, saveSettings } from './storage.mjs';
-import { handleLinks, populateSettings } from './view.mjs';
+import { handleChangeToApiUrlSelect, handleLinks, populateSettings } from './view.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const settings = await loadSettings();
@@ -15,6 +15,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 const form = document.getElementById('settings');
+
+form.addEventListener('change', async (event) => {
+  if (event.target.id === 'apiUrlSelect') {
+    await reloadSettings();
+  }
+});
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   await reloadSettings(form);
